@@ -15,16 +15,18 @@ import javax.swing.JOptionPane;
 
 public class JSONParser {
 
-	private String fileList;
+	public String fileList;
 	
 	public JSONParser(File file, String identifier) throws ZipException, IOException {
 		fileList = "";
 		String fileName = file.getName();
-		Scanner copy = new Scanner(file);
-		Scanner copy2 = new Scanner(file);
 		
 		if (fileName.endsWith(".json")) {
-			parseJson(copy,copy2,identifier);
+			Scanner copy = new Scanner(file);
+			Scanner copy2 = new Scanner(file);
+			parseJson(copy,copy2,identifier,file.toString().substring(file.toString().length() - 10));
+			copy.close();
+			copy2.close();
 		}
 		else if (fileName.endsWith(".zip")){
 			batchExtraction(file,identifier);
@@ -32,11 +34,9 @@ public class JSONParser {
 		else{
 			JOptionPane.showMessageDialog(null, "Unable to Parse File Format. Please ensure this is a *.json, or a .zip filled only with .json", "InfoBox: Failure to Load File", JOptionPane.INFORMATION_MESSAGE);
 		}
-		copy.close();
-		copy2.close();
 	}
 
-	//Method:			"folderExtraction(String)"
+	//Method:			"batchExtraction(String)"
 	//Purpose:		This will allow the user to import not just a single file, but a .zip batch
 	// 				and parse through all of them.
 	public void batchExtraction(File file, String identifier) throws ZipException, IOException{
@@ -48,31 +48,30 @@ public class JSONParser {
 		parseAllFromFolder(listOfFiles,identifier);
 	}
 	
-	private void parseAllFromFolder(File[] listOfFiles, String identifier){
-		String fileName = "";
+	private void parseAllFromFolder(File[] listOfFiles, String identifier) throws FileNotFoundException{
 		// Parsing through each file name, then converting filename into usable string for each folder in file
-		int count = 0;
 		for (int i = 0; i < listOfFiles.length; i ++) {
-			count = 0;
-		    for (int j = 0; j < listOfFiles[i].toString().lastIndexOf('\\') + 1; j++) {
-		    	if (listOfFiles[i].toString().charAt(j) == '\\' && listOfFiles[i].toString().charAt(j - 1) != '\\' && listOfFiles[i].toString().charAt(j + 1) != '\\') {
-		    		fileName += listOfFiles[i].toString().substring(count,j) + "\\";
-		    		count = j;
-		    		if (j == listOfFiles[i].toString().lastIndexOf('\\')){
-		    			fileName +=  listOfFiles[i].toString().substring(count) + "\n";
-		    		}
-		    	}
-		    }
-
-		    //Setting up next method inputs
-			Scanner copy = new Scanner(fileName);
-			Scanner copy2 = new Scanner(fileName);
-			parseJson(copy,copy2,identifier);
+			//Setting up next method inputs
+		    File file = new File(listOfFiles[i].toString());
+			Scanner copy = new Scanner(file);
+			Scanner copy2 = new Scanner(file);
+			parseJson(copy,copy2,identifier, listOfFiles[i].toString().substring(listOfFiles[i].toString().length() - 10));
+			copy.close();
+			copy2.close();
 		}
 	}
 	
-	private String parseJson(Scanner copy, Scanner copy2, String identifier){
-		return "";
+	private void parseJson(Scanner copy, Scanner copy2, String identifier, String fileName){
+		String temp = "";
+		
+		int count = 1;
+		while (copy.hasNextLine()){
+			temp = copy.nextLine();
+			if (temp.indexOf(identifier) != -1) {
+				fileList += ("Quest Template: " + fileName + "\nLine#: " + count + "\n" + temp + "\n\n");
+			}
+			count++;
+		}
 	}
 	
 	
@@ -131,10 +130,17 @@ public class JSONParser {
 	            extractFolder(destFile.getAbsolutePath());
 	        }
 	    }
+	    zip.close();
 	    newPath += "\\" + newPath.substring(newPath.lastIndexOf("\\") +1).trim();
 
 	    return newPath;
 	    
+	}
+	
+	public void toFile() throws IOException {
+		PrintWriter output = new PrintWriter(new FileWriter("All_Lua_Finds.txt"));
+		output.println(fileList);
+		output.close();
 	}
 	
 	

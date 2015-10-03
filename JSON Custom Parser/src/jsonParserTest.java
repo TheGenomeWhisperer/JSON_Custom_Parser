@@ -11,9 +11,9 @@ public class jsonParserTest {
 	@Test
 	public void jsonParserTestZIP() throws ZipException, IOException {
 		
-		File testFile = new File("C:\\Users\\toppi\\Desktop\\QuestTemplates.zip");
-		JSONParser test = new JSONParser(testFile,"");
-		
+		File testFile = new File("C:\\Users\\toppi\\Desktop\\QuestTemplates\\QuestTemplates\\34348.json");
+		JSONParser test = new JSONParser(testFile,"Lua");
+		test.toFile();
 //		assertTrue(name.equals("C:\\Users\\toppi\\Desktop\\QuestTemplates\\QuestTemplates"));
 	}
 	
