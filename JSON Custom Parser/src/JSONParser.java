@@ -15,71 +15,71 @@ import javax.swing.JOptionPane;
 
 public class JSONParser {
 
-	private String fileList;
+	public String fileList;
 	
 	public JSONParser(File file, String identifier) throws ZipException, IOException {
-		String fileName = file.getName();
 		fileList = "";
-		Scanner copy = new Scanner(file);
-		Scanner copy2 = new Scanner(file);
+		String fileName = file.getName();
 		
 		if (fileName.endsWith(".json")) {
-			parseJson(copy,copy2,identifier);
+			Scanner copy = new Scanner(file);
+			Scanner copy2 = new Scanner(file);
+			parseJson(copy,copy2,identifier,file.toString().substring(file.toString().length() - 10));
+			copy.close();
+			copy2.close();
 		}
 		else if (fileName.endsWith(".zip")){
-			zipExtraction(file,identifier);
+			batchExtraction(file,identifier);
 		}
 		else{
 			JOptionPane.showMessageDialog(null, "Unable to Parse File Format. Please ensure this is a *.json, or a .zip filled only with .json", "InfoBox: Failure to Load File", JOptionPane.INFORMATION_MESSAGE);
 		}
-		copy.close();
-		copy2.close();
 	}
 
-	//Method:			"folderExtraction(String)"
+	//Method:			"batchExtraction(String)"
 	//Purpose:		This will allow the user to import not just a single file, but a .zip batch
 	// 				and parse through all of them.
-	public void zipExtraction(File file, String identifier) throws ZipException, IOException{
-		// File Name for later output
-		String zipFileName = file.getName().substring(file.getName().lastIndexOf("\\") + 1);
-		// badFile will contain all the files not in correct format.
-		String badFile = "";
-		
-		// Progress tracking
-		int numParsed = 0;
-
-		// Opening the .zip
-		ZipFile zip = new ZipFile(file);
-		Enumeration<? extends ZipEntry> entries = zip.entries();
-		
-		// Enumerating the .Zip and all files
-		while (entries.hasMoreElements()){
-			// Selecting a file
-			ZipEntry entry = (ZipEntry) entries.nextElement();
-			// Storing file name
-			String entryName = entry.getName().substring(entry.getName().length() - 10);
-
-		}
-		zip.close();
-		File folder = new File("your/path");
+	public void batchExtraction(File file, String identifier) throws ZipException, IOException{
+		// Extracts all files and places them in a folder
+		String folderLocation = extractFolder(file.getPath());
+				
+		File folder = new File(folderLocation);
 		File[] listOfFiles = folder.listFiles();
-		parseAllFromFolder(listOfFiles);
+		parseAllFromFolder(listOfFiles,identifier);
 	}
 	
-	private void parseAllFromFolder(File[] lostOfFiles){
-		
+	private void parseAllFromFolder(File[] listOfFiles, String identifier) throws FileNotFoundException{
+		// Parsing through each file name, then converting filename into usable string for each folder in file
+		for (int i = 0; i < listOfFiles.length; i ++) {
+			//Setting up next method inputs
+		    File file = new File(listOfFiles[i].toString());
+			Scanner copy = new Scanner(file);
+			Scanner copy2 = new Scanner(file);
+			parseJson(copy,copy2,identifier, listOfFiles[i].toString().substring(listOfFiles[i].toString().length() - 10));
+			copy.close();
+			copy2.close();
+		}
 	}
 	
-	private void parseJson(Scanner copy, Scanner copy2, String identifier){
+	private void parseJson(Scanner copy, Scanner copy2, String identifier, String fileName){
+		String temp = "";
 		
+		int count = 1;
+		while (copy.hasNextLine()){
+			temp = copy.nextLine();
+			if (temp.indexOf(identifier) != -1) {
+				fileList += ("Quest Template: " + fileName + "\nLine#: " + count + "\n" + temp + "\n\n");
+			}
+			count++;
+		}
 	}
 	
 	
 	// Zip Folder Extraction Method credit given to @NeilMonday
 	// http://stackoverflow.com/users/308843/neilmonday
-	static public void extractFolder(String zipFile) throws ZipException, IOException 
+	// Slight modifications made.
+	public static String extractFolder(String zipFile) throws ZipException, IOException 
 	{
-	    System.out.println(zipFile);
 	    int BUFFER = 2048;
 	    File file = new File(zipFile);
 
@@ -130,9 +130,20 @@ public class JSONParser {
 	            extractFolder(destFile.getAbsolutePath());
 	        }
 	    }
+	    zip.close();
+	    newPath += "\\" + newPath.substring(newPath.lastIndexOf("\\") +1).trim();
+
+	    return newPath;
+	    
+	}
+	
+	public void toFile() throws IOException {
+		PrintWriter output = new PrintWriter(new FileWriter("All_Lua_Finds.txt"));
+		output.println(fileList);
+		output.close();
 	}
 	
 	
 	
-	
+
 }
