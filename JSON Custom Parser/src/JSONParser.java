@@ -39,7 +39,7 @@ public class JSONParser {
 	//Method:			"batchExtraction(String)"
 	//Purpose:		This will allow the user to import not just a single file, but a .zip batch
 	// 				and parse through all of them.
-	public void batchExtraction(File file, String identifier) throws ZipException, IOException{
+	private void batchExtraction(File file, String identifier) throws ZipException, IOException{
 		// Extracts all files and places them in a folder
 		String folderLocation = extractFolder(file.getPath());
 				
@@ -78,7 +78,7 @@ public class JSONParser {
 	// Zip Folder Extraction Method credit given to @NeilMonday
 	// http://stackoverflow.com/users/308843/neilmonday
 	// Slight modifications made.
-	public static String extractFolder(String zipFile) throws ZipException, IOException 
+	private static String extractFolder(String zipFile) throws ZipException, IOException 
 	{
 	    int BUFFER = 2048;
 	    File file = new File(zipFile);
@@ -130,11 +130,10 @@ public class JSONParser {
 	            extractFolder(destFile.getAbsolutePath());
 	        }
 	    }
+	    // My personal Lines added here...
 	    zip.close();
 	    newPath += "\\" + newPath.substring(newPath.lastIndexOf("\\") +1).trim();
-
 	    return newPath;
-	    
 	}
 	
 	public void toFile() throws IOException {
