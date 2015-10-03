@@ -12,7 +12,10 @@ public class jsonParserTest {
 		
 		File testFile = new File("C:\\Users\\toppi\\Desktop\\QuestTemplates.zip");
 		JSONParser test = new JSONParser(testFile,"");
-		test.extractFolder(testFile.toString());
+		String name = test.extractFolder(testFile.toString());
+		name += "\\" + name.substring(name.lastIndexOf("\\") +1);
+		
+		System.out.println(name);
 	}
 
 }

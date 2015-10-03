@@ -27,7 +27,7 @@ public class JSONParser {
 			parseJson(copy,copy2,identifier);
 		}
 		else if (fileName.endsWith(".zip")){
-			zipExtraction(file,identifier);
+			batchExtraction(file,identifier);
 		}
 		else{
 			JOptionPane.showMessageDialog(null, "Unable to Parse File Format. Please ensure this is a *.json, or a .zip filled only with .json", "InfoBox: Failure to Load File", JOptionPane.INFORMATION_MESSAGE);
@@ -39,7 +39,7 @@ public class JSONParser {
 	//Method:			"folderExtraction(String)"
 	//Purpose:		This will allow the user to import not just a single file, but a .zip batch
 	// 				and parse through all of them.
-	public void zipExtraction(File file, String identifier) throws ZipException, IOException{
+	public void batchExtraction(File file, String identifier) throws ZipException, IOException{
 		// File Name for later output
 		String zipFileName = file.getName().substring(file.getName().lastIndexOf("\\") + 1);
 		// badFile will contain all the files not in correct format.
@@ -77,7 +77,8 @@ public class JSONParser {
 	
 	// Zip Folder Extraction Method credit given to @NeilMonday
 	// http://stackoverflow.com/users/308843/neilmonday
-	static public void extractFolder(String zipFile) throws ZipException, IOException 
+	// Slight modifications made.
+	static public String extractFolder(String zipFile) throws ZipException, IOException 
 	{
 	    System.out.println(zipFile);
 	    int BUFFER = 2048;
@@ -130,9 +131,10 @@ public class JSONParser {
 	            extractFolder(destFile.getAbsolutePath());
 	        }
 	    }
+	    return newPath;
 	}
 	
 	
 	
-	
+
 }
