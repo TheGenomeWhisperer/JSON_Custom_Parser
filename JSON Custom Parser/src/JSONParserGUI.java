@@ -39,7 +39,7 @@ public class JSONParserGUI {
             		JSONParser jp;
 			try {
 				jp = new JSONParser(selectedFile, "Lua");
-			jp.toFile();
+				jp.toFile();
 		} catch (IOException e2) {
 			System.out.println("Unable to Find File");
 		}

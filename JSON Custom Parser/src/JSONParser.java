@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 public class JSONParser {
 
 	public String fileList;
+	public int totalFinds = 0;
 	
 	public JSONParser(File file, String identifier) throws ZipException, IOException {
 		fileList = "";
@@ -23,10 +24,8 @@ public class JSONParser {
 		
 		if (fileName.endsWith(".json")) {
 			Scanner copy = new Scanner(file);
-			Scanner copy2 = new Scanner(file);
-			parseJson(copy,copy2,identifier,file.toString().substring(file.toString().length() - 10));
+			parseJson(copy,identifier,file.toString().substring(file.toString().length() - 10));
 			copy.close();
-			copy2.close();
 		}
 		else if (fileName.endsWith(".zip")){
 			batchExtraction(file,identifier);
@@ -34,6 +33,7 @@ public class JSONParser {
 		else{
 			JOptionPane.showMessageDialog(null, "Unable to Parse File Format. Please ensure this is a *.json, or a .zip filled only with .json", "InfoBox: Failure to Load File", JOptionPane.INFORMATION_MESSAGE);
 		}
+		fileList = "Total Number of Finds: " + totalFinds + "\n\n" + fileList;
 	}
 
 	//Method:			"batchExtraction(String)"
@@ -54,14 +54,12 @@ public class JSONParser {
 			//Setting up next method inputs
 		    File file = new File(listOfFiles[i].toString());
 			Scanner copy = new Scanner(file);
-			Scanner copy2 = new Scanner(file);
-			parseJson(copy,copy2,identifier, listOfFiles[i].toString().substring(listOfFiles[i].toString().length() - 10));
+			parseJson(copy,identifier, listOfFiles[i].toString().substring(listOfFiles[i].toString().length() - 10));
 			copy.close();
-			copy2.close();
 		}
 	}
 	
-	private void parseJson(Scanner copy, Scanner copy2, String identifier, String fileName){
+	private void parseJson(Scanner copy, String identifier, String fileName){
 		String temp = "";
 		
 		int count = 1;
@@ -69,7 +67,8 @@ public class JSONParser {
 			temp = copy.nextLine();
 			if (temp.indexOf(identifier) != -1) {
 				fileList += ("Quest Template: " + fileName + "\nLine#: " + count + "\n" + temp + "\n\n");
-			}
+				totalFinds++;
+			}	
 			count++;
 		}
 	}
