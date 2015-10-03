@@ -18,8 +18,8 @@ public class JSONParser {
 	private String fileList;
 	
 	public JSONParser(File file, String identifier) throws ZipException, IOException {
-		String fileName = file.getName();
 		fileList = "";
+		String fileName = file.getName();
 		Scanner copy = new Scanner(file);
 		Scanner copy2 = new Scanner(file);
 		
@@ -40,47 +40,47 @@ public class JSONParser {
 	//Purpose:		This will allow the user to import not just a single file, but a .zip batch
 	// 				and parse through all of them.
 	public void batchExtraction(File file, String identifier) throws ZipException, IOException{
-		// File Name for later output
-		String zipFileName = file.getName().substring(file.getName().lastIndexOf("\\") + 1);
-		// badFile will contain all the files not in correct format.
-		String badFile = "";
-		
-		// Progress tracking
-		int numParsed = 0;
-
-		// Opening the .zip
-		ZipFile zip = new ZipFile(file);
-		Enumeration<? extends ZipEntry> entries = zip.entries();
-		
-		// Enumerating the .Zip and all files
-		while (entries.hasMoreElements()){
-			// Selecting a file
-			ZipEntry entry = (ZipEntry) entries.nextElement();
-			// Storing file name
-			String entryName = entry.getName().substring(entry.getName().length() - 10);
-
-		}
-		zip.close();
-		File folder = new File("your/path");
+		// Extracts all files and places them in a folder
+		String folderLocation = extractFolder(file.getPath());
+				
+		File folder = new File(folderLocation);
 		File[] listOfFiles = folder.listFiles();
-		parseAllFromFolder(listOfFiles);
+		parseAllFromFolder(listOfFiles,identifier);
 	}
 	
-	private void parseAllFromFolder(File[] lostOfFiles){
-		
+	private void parseAllFromFolder(File[] listOfFiles, String identifier){
+		String fileName = "";
+		// Parsing through each file name, then converting filename into usable string for each folder in file
+		int count = 0;
+		for (int i = 0; i < listOfFiles.length; i ++) {
+			count = 0;
+		    for (int j = 0; j < listOfFiles[i].toString().lastIndexOf('\\') + 1; j++) {
+		    	if (listOfFiles[i].toString().charAt(j) == '\\' && listOfFiles[i].toString().charAt(j - 1) != '\\' && listOfFiles[i].toString().charAt(j + 1) != '\\') {
+		    		fileName += listOfFiles[i].toString().substring(count,j) + "\\";
+		    		count = j;
+		    		if (j == listOfFiles[i].toString().lastIndexOf('\\')){
+		    			fileName +=  listOfFiles[i].toString().substring(count) + "\n";
+		    		}
+		    	}
+		    }
+
+		    //Setting up next method inputs
+			Scanner copy = new Scanner(fileName);
+			Scanner copy2 = new Scanner(fileName);
+			parseJson(copy,copy2,identifier);
+		}
 	}
 	
-	private void parseJson(Scanner copy, Scanner copy2, String identifier){
-		
+	private String parseJson(Scanner copy, Scanner copy2, String identifier){
+		return "";
 	}
 	
 	
 	// Zip Folder Extraction Method credit given to @NeilMonday
 	// http://stackoverflow.com/users/308843/neilmonday
 	// Slight modifications made.
-	static public String extractFolder(String zipFile) throws ZipException, IOException 
+	public static String extractFolder(String zipFile) throws ZipException, IOException 
 	{
-	    System.out.println(zipFile);
 	    int BUFFER = 2048;
 	    File file = new File(zipFile);
 
@@ -131,7 +131,10 @@ public class JSONParser {
 	            extractFolder(destFile.getAbsolutePath());
 	        }
 	    }
+	    newPath += "\\" + newPath.substring(newPath.lastIndexOf("\\") +1).trim();
+
 	    return newPath;
+	    
 	}
 	
 	
